@@ -13,7 +13,7 @@ require 'csv'
 @csv_headers = ['uri', 'title', 'notes']
 
 
-# Use this method to perform the API request to search for whatever term
+# Use this method to perform the API request to search the notes field on a record for whatever term
 def get_terms(page=1, term)
   # set API endpoint
   path = '/search'
@@ -29,6 +29,7 @@ def get_terms(page=1, term)
 end
 
 # process raw values from API response (a hash) to array of values for a row in the CSV
+# creates resolvable links to individual records on archivesspace
 # removes line breaks from strings and replaces them with ' | '
 def values_to_row(hash)
   @csv_headers.map do |h|
@@ -86,7 +87,6 @@ def generate_csv(rows, term)
   Dir.mkdir(csv_dir) if !Dir.exist?(csv_dir)
 
   # set file name for CSV to be generated
-
   csv_filepath = "#{csv_dir}/#{term}.csv"
 
   # use CSV.open to create a writable .csv file and write to it
@@ -97,6 +97,7 @@ def generate_csv(rows, term)
   end
 end
 
+#put it all together! iterate through each term in the text file 
 @search_terms.each do |word|
   rows = get_rows(term=word)
   generate_csv(rows, term=word)
